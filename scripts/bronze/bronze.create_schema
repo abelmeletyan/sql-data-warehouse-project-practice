@@ -1,0 +1,40 @@
+/* 
+================================================================================
+	-- I am practicing bronze + silver layers by myself - Try #1 | 04/27/2026
+	1. Create database
+	2. Create schemas (bronze, silver and gold)
+================================================================================
+*/ 
+
+-- Step 1: Create database + schema
+-- Step 2: Create Bronze Layer
+	-- a. DDL - Create tables
+	-- b. Bulk Insert data into 6 tables
+	-- c. Create bronze PROC
+-- Step 3: Create Silver Layer
+	-- a. Complete transformations
+	-- b. Update DDL if needed
+	-- c. Insert data from queries
+	-- d. Create silver PROC
+
+use master;
+
+IF EXISTS(SELECT 1 FROM sys.databases where name='DataWarehousePractice1')
+	BEGIN
+		ALTER DATABASE DataWarehousePractice1
+		SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+		DROP DATABASE DataWarehousePractice1
+	END
+
+create database DataWarehousePractice1;
+go
+
+use DataWarehousePractice1;
+go
+
+CREATE SCHEMA bronze;
+go
+CREATE SCHEMA silver;
+go
+CREATE SCHEMA gold;
+go
