@@ -1,0 +1,113 @@
+-- USE DataWarehousePractice1;
+
+CREATE OR ALTER PROC bronze.load_bronze AS
+BEGIN
+	DECLARE @start_time datetime, @end_time datetime, @batch_start_time datetime, @batch_end_time datetime;
+	
+	BEGIN TRY
+		-- ======================================================================
+		-- == BULK INSERT
+		-- ======================================================================
+
+		print '>>Batch loading starting now';
+		print '>>>>Table crm_cust_info loading now';
+
+		SET @batch_start_time = GETDATE();
+
+		SET @start_time = GETDATE();
+		truncate table bronze.crm_cust_info;
+
+		BULK INSERT bronze.crm_cust_info
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_crm\cust_info.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table crm_cust_info is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+
+-- =====================================================================================		
+		print '>>>>Table crm_prd_info loading now';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.crm_prd_info;
+		BULK INSERT bronze.crm_prd_info
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_crm\prd_info.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table crm_prd_info is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+-- ======================================================================================		
+		print '>>>>Table crm_sales_details loading now';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.crm_sales_details;
+		BULK INSERT bronze.crm_sales_details
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_crm\sales_details.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table crm_sales_details is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+-- =========================================================================================		
+		print '>>>>Table erp_cust_az12 loading now';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erp_cust_az12;
+		BULK INSERT bronze.erp_cust_az12
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_erp\cust_az12.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table erp_cust_az12 is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+-- =======================================================================================		
+		print '>>>>Table erp_loc_a101 loading now';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erp_loc_a101;
+		BULK INSERT bronze.erp_loc_a101
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_erp\loc_a101.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table erp_loc_a101 is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+-- =======================================================================================		
+		print '>>>>Table erp_px_cat_g1v2 loading now';		
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erp_px_cat_g1v2;
+		BULK INSERT bronze.erp_px_cat_g1v2
+		FROM 'F:\EXTERNAL HARD DRIVE\_SQL__________\Data with Baraa_04.08.26\datasets\source_erp\px_cat_g1v2.csv'
+		WITH
+		(
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		print 'Loading time for table erp_px_cat_g1v2 is ' + cast(datediff(second, @start_time, @end_time) as nvarchar) + ' seconds!';
+		
+		SET @batch_end_time = GETDATE();
+		print 'Loading time for the whole batch is ' + cast(datediff(second, @batch_start_time, @batch_end_time) as nvarchar) + ' seconds!';
+	END TRY
+	BEGIN CATCH
+		PRINT 'Following errors occured while loading bronze layer';
+		PRINT 'Here is error message: ' + error_message();
+		PRINT 'Error number is ' + cast(error_number() as nvarchar);
+		PRINT 'Error state is ' + cast(error_state() as nvarchar);
+	END CATCH
+END;
+
+-- EXEC BRONZE.LOAD_BRONZE;
